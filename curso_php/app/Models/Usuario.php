@@ -17,7 +17,7 @@ class Usuario extends Authenticatable
         'senha',
         'admin',
         'cpf',
-        'assinatura'
+        'plano_id'
     ];
 
     protected $hidden = [
@@ -28,4 +28,9 @@ class Usuario extends Authenticatable
     {
         return $this->senha;
     }
+
+   public function plan()
+{
+    return $this->belongsTo(Plano::class, 'plano_id');
+}
 }
