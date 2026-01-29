@@ -33,4 +33,8 @@ class Usuario extends Authenticatable
 {
     return $this->belongsTo(Plano::class, 'plano_id');
 }
+
+protected $attributes = [
+    'status' => 'ativo',
+];
 }

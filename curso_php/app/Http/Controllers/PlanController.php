@@ -7,13 +7,11 @@ use App\Models\Plano;
 
 class PlanController extends Controller
 {
-    // listar planos
     public function index()
     {
         return response()->json(Plano::all());
     }
 
-    // criar plano
     public function store(Request $request)
     {
         $request->validate([
@@ -24,7 +22,7 @@ class PlanController extends Controller
         $plan = Plano::create([
             'nome' => $request->nome,
             'preco' => $request->preco,
-            'active' => true
+            'status' => true
         ]);
 
         return response()->json($plan, 201);
