@@ -24,17 +24,29 @@ class Usuario extends Authenticatable
         'senha',
     ];
 
-    public function getAuthPassword()
-    {
-        return $this->senha;
-    }
-
-   public function plan()
+public function setSenhaAttribute($value)
 {
-    return $this->belongsTo(Plano::class, 'plano_id');
+    $this->attributes['senha'] = bcrypt($value);
 }
 
 protected $attributes = [
     'status' => 'ativo',
 ];
+
+public function podeSerDeletadoPor($usuarioLogado)
+{
+    return $usuarioLogado->id !== $this->id;
+}
+
+public function escolherPlano($planoId)
+{
+    $this->plano_id = $planoId;
+    $this->save();
+}
+
+public function removerPlano()
+{
+    $this->plano_id = null;
+    $this->save();
+}
 }

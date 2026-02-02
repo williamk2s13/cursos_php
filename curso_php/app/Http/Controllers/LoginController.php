@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreUsuarioRequest;
 
 class LoginController extends Controller
 {
@@ -50,34 +51,10 @@ class LoginController extends Controller
         ]);
     }
 
-public function register(Request $request)
+
+public function register(StoreUsuarioRequest $request)
 {
-    $messages = [
-        'senha.min' => 'A senha deve ter no mínimo 8 caracteres.',
-        'senha.regex' => 'A senha deve conter letra maiúscula, minúscula, número e caractere especial.',
-    ];
-
-    $request->validate([
-        'nome' => 'required|string|max:255',
-        'email' => 'required|email|unique:usuarios,email',
-        'senha' => [
-            'required',
-            'string',
-            'min:8',
-            'regex:/[a-z]/',
-            'regex:/[A-Z]/',
-            'regex:/[0-9]/',
-            'regex:/[@$!%*#?&]/',
-        ],
-    ], $messages);
-
-    $usuario = Usuario::create([
-        'nome' => $request->nome,
-        'email' => $request->email,
-        'senha' => bcrypt($request->senha),
-        'cpf' => $request->cpf,
-        'admin' => $request->admin ?? 0
-    ]);
+    $usuario = Usuario::create($request->all());
 
     return response()->json([
         'success' => true,
@@ -85,4 +62,5 @@ public function register(Request $request)
         'usuario' => $usuario
     ], 201);
 }
+
 }

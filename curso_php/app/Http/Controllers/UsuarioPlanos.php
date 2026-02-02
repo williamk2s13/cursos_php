@@ -3,19 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ChoosePlanoRequest;
 
 class UsuarioPlanos extends Controller
 {
-    // escolher plano
-    public function choose(Request $request)
+    public function choose(ChoosePlanoRequest $request)
     {
-        $request->validate([
-            'plano_id' => 'required|exists:planos,id'
-        ]);
-
         $user = $request->user();
-        $user->plano_id = $request->plano_id;
-        $user->save();
+        $user->escolherPlano($request->plano_id);
 
         return response()->json([
             'message' => 'Plano atribuído ao usuário',
@@ -23,7 +18,6 @@ class UsuarioPlanos extends Controller
         ]);
     }
 
-    // ver plano do usuário
     public function myPlan(Request $request)
     {
         return response()->json(
@@ -31,15 +25,15 @@ class UsuarioPlanos extends Controller
         );
     }
 
-    // remover plano do usuário
     public function remove(Request $request)
     {
         $user = $request->user();
-        $user->plan_id = null;
-        $user->save();
+        $user->removerPlano();
 
         return response()->json([
             'message' => 'Plano removido'
         ]);
     }
 }
+
+

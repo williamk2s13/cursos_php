@@ -16,6 +16,9 @@ class Plano extends Model
 
     public $timestamps = false;
 
+    protected $attributes = [
+    'status' => true
+    ];
     public function users()
     {
         return $this->hasMany(Usuario::class);

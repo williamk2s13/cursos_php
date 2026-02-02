@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Plano;
+use App\Http\Requests\StorePlanoRequest;
 
 class PlanController extends Controller
 {
@@ -12,23 +13,12 @@ class PlanController extends Controller
         return response()->json(Plano::all());
     }
 
-    public function store(Request $request)
+    public function store(StorePlanoRequest $request)
     {
-        $request->validate([
-            'nome'  => 'required|string|unique:planos,nome',
-            'preco' => 'required|numeric|min:0'
-        ]);
-
-        $plan = Plano::create([
-            'nome' => $request->nome,
-            'preco' => $request->preco,
-            'status' => true
-        ]);
-
+        $plan = Plano::create($request->validated());
         return response()->json($plan, 201);
     }
 
-    // deletar plano
     public function destroy($id)
     {
         $plan = Plano::findOrFail($id);
