@@ -51,10 +51,13 @@ class LoginController extends Controller
         ]);
     }
 
-
 public function register(StoreUsuarioRequest $request)
 {
-    $usuario = Usuario::create($request->all());
+
+    $data = $request->all();
+    $data['admin'] = 0; 
+
+    $usuario = Usuario::create($data);
 
     return response()->json([
         'success' => true,
