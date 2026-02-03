@@ -26,7 +26,8 @@ class StoreUsuarioRequest extends FormRequest
                 'regex:/[@$!%*#?&]/',
             ],
             'cpf' => 'nullable|string',
-            'admin' => 'nullable|boolean'
+            'admin' => 'nullable|boolean',
+            'telefone' => 'required|string|max:11'
         ];
     }
 

@@ -47,6 +47,7 @@ class LoginController extends Controller
                 'nome' => $user->nome,
                 'email' => $user->email,
                 'admin' => (bool) $user->admin,
+                'telefone' => $user->telefone,
             ]
         ]);
     }

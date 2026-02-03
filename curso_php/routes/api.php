@@ -15,11 +15,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/perfil', function (Request $request) {
         return $request->user();
     });
-
-    Route::put('/usuarios/{id}', [UserController::class, 'update']);
-    
 });
 
+Route::put('/usuarios/{id}', [UserController::class, 'update']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/planos', [PlanController::class, 'index']);

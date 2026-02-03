@@ -17,7 +17,8 @@ class Usuario extends Authenticatable
         'senha',
         'admin',
         'cpf',
-        'plano_id'
+        'plano_id',
+        'telefone'
     ];
 
     protected $hidden = [
