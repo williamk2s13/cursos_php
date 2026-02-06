@@ -18,7 +18,8 @@ class LoginController extends Controller
         ]);
 
       
-        $user = Usuario::where('email', $request->email)->first();
+        $user = Usuario::with('plano')->where('email', $request->email)->first();
+
 
         if (!$user) {
             return response()->json([
@@ -42,13 +43,7 @@ class LoginController extends Controller
             'success' => true,
             'message' => 'Login realizado com sucesso',
             'token' => $token,
-            'usuario' => [
-                'id' => $user->id,
-                'nome' => $user->nome,
-                'email' => $user->email,
-                'admin' => (bool) $user->admin,
-                'telefone' => $user->telefone,
-            ]
+          'usuario' => $user
         ]);
     }
 

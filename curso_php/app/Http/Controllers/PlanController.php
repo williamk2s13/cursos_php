@@ -2,27 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Plano;
 use App\Http\Requests\StorePlanoRequest;
+use Illuminate\Support\Facades\DB;
 
 class PlanController extends Controller
 {
     public function index()
     {
-        return response()->json(Plano::all());
+        return response()->json(
+            Plano::with('beneficios')->get()
+        );
     }
 
     public function store(StorePlanoRequest $request)
     {
-        $plan = Plano::create($request->validated());
-        return response()->json($plan, 201);
+        return DB::transaction(function () use ($request) {
+
+            $plano = Plano::create(
+                $request->only(['nome', 'preco', 'status','pdf  '])
+            );
+
+            foreach ($request->beneficios as $beneficio) {
+                $plano->beneficios()->create($beneficio);
+            }
+
+            return response()->json(
+                $plano->load('beneficios'),
+                201
+            );
+        });
     }
 
     public function destroy($id)
     {
-        $plan = Plano::findOrFail($id);
-        $plan->delete();
+        $plano = Plano::findOrFail($id);
+        $plano->delete();
 
         return response()->json([
             'message' => 'Plano deletado'

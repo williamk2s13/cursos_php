@@ -34,6 +34,11 @@ protected $attributes = [
     'status' => 'ativo',
 ];
 
+public function plano()
+{
+    return $this->belongsTo(Plano::class);
+}
+
 public function podeSerDeletadoPor($usuarioLogado)
 {
     return $usuarioLogado->id !== $this->id;

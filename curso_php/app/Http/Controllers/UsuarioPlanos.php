@@ -14,14 +14,14 @@ class UsuarioPlanos extends Controller
 
         return response()->json([
             'message' => 'Plano atribuído ao usuário',
-            'plan' => $user->plan
+            'plan' => $user->plano_id
         ]);
     }
 
     public function myPlan(Request $request)
     {
         return response()->json(
-            $request->user()->plan
+            $request->user()->plano_id
         );
     }
 
