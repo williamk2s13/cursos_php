@@ -23,8 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::put('/usuarios/{id}', [UserController::class, 'update']);
 
-Route::middleware('auth:sanctum')->group(function () {
     Route::get('/planos', [PlanController::class, 'index']);
+
+Route::middleware('auth:sanctum')->group(function () {
+
     Route::post('/planos', [PlanController::class, 'store']);
     Route::delete('/planos/{id}', [PlanController::class, 'destroy']);
 });
@@ -35,9 +37,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/usuario/plano', [UsuarioPlanos::class, 'remove']);
 });
 
+Route::get('/cursos', [CursoController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/cursos', [CursoController::class, 'index']);
     Route::get('/cursos/{curso}', [CursoController::class, 'show']);
     Route::post('/cursos', [CursoController::class, 'store']);
 
