@@ -26,7 +26,6 @@ Route::put('/usuarios/{id}', [UserController::class, 'update']);
     Route::get('/planos', [PlanController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::post('/planos', [PlanController::class, 'store']);
     Route::delete('/planos/{id}', [PlanController::class, 'destroy']);
 });

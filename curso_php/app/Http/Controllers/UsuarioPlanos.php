@@ -8,15 +8,17 @@ use App\Http\Requests\ChoosePlanoRequest;
 class UsuarioPlanos extends Controller
 {
     public function choose(ChoosePlanoRequest $request)
-    {
-        $user = $request->user();
-        $user->escolherPlano($request->plano_id);
+{
+    $user = $request->user();
+    $user->escolherPlano($request->plano_id);
+    $user->refresh();
+    $user->load('plano');
 
-        return response()->json([
-            'message' => 'Plano atribuído ao usuário',
-            'plan' => $user->plano_id
-        ]);
-    }
+    return response()->json([
+        'message' => 'Plano atribuído ao usuário',
+        'usuario' => $user
+    ]);
+}
 
     public function myPlan(Request $request)
     {
