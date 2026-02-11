@@ -44,15 +44,21 @@ public function podeSerDeletadoPor($usuarioLogado)
     return $usuarioLogado->id !== $this->id;
 }
 
-public function escolherPlano($planoId)
+public function escolherPlano(int $planoId): void
 {
     $this->plano_id = $planoId;
     $this->save();
 }
-
 public function removerPlano()
 {
     $this->plano_id = null;
     $this->save();
 }
+
+public function historicoPlanos()
+{
+    return $this->hasMany(PlanoHistorico::class, 'usuario_id')
+                ->orderBy('created_at', 'desc');
+}
+
 }

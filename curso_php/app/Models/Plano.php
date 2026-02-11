@@ -34,4 +34,10 @@ class Plano extends Model
     {
         return $this->hasMany(Usuario::class);
     }
+
+    public function historicoUsuarios()
+{
+    return $this->hasMany(PlanoHistorico::class, 'plano_id');
+}
+
 }

@@ -15,11 +15,8 @@ Route::post('/cadastro', [LoginController::class, 'register']);
 
 
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/perfil', function (Request $request) {
-        return $request->user();
-    });
-});
+Route::middleware('auth:sanctum')->get('/perfil', [UserController::class, 'perfil']);
+
 
 Route::put('/usuarios/{id}', [UserController::class, 'update']);
 

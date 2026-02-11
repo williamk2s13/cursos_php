@@ -43,6 +43,20 @@ class UserController extends Controller
             'mensagem' => 'Usuário removido com sucesso!'
         ]);
     }
+
+        public function perfil(Request $request)
+    {
+        $user = $request->user();
+
+        $user->load([
+            'plano',
+            'historicoPlanos.plano'
+        ]);
+
+        return response()->json([
+            'usuario' => $user
+        ]);
+    }
 }
 
 

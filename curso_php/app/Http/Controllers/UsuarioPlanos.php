@@ -1,23 +1,33 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Requests\ChoosePlanoRequest;
+use App\Models\PlanoHistorico;
 
 class UsuarioPlanos extends Controller
 {
     public function choose(ChoosePlanoRequest $request)
 {
-    $user = $request->user();
-    $user->escolherPlano($request->plano_id);
-    $user->refresh();
-    $user->load('plano');
+    return DB::transaction(function () use ($request) {
 
-    return response()->json([
-        'message' => 'Plano atribuído ao usuário',
-        'usuario' => $user
-    ]);
+        $user = $request->user();
+
+        $user->escolherPlano($request->plano_id);
+
+        PlanoHistorico::create([
+            'usuario_id' => $user->id,
+            'plano_id'   => $request->plano_id,
+        ]);
+
+        $user->refresh()->load('plano');
+
+        return response()->json([
+            'message' => 'Plano atribuído ao usuário',
+            'usuario' => $user
+        ]);
+    });
 }
 
     public function myPlan(Request $request)
