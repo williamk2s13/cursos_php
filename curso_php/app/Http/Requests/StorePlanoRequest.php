@@ -17,7 +17,10 @@ class StorePlanoRequest extends FormRequest
             'nome' => 'required|string|unique:planos,nome',
             'preco' => 'required|numeric|min:0',
             'status' => 'nullable|boolean',
-            'status' => 'nullable|boolean',
+            'duracao' => 'required|in:mensal,anual',
+            'dias_validade' => 'required|integer|min:1',
+            'limite_cursos_mes' => 'nullable|integer|min:0',
+            'limite_aulas_dia' => 'nullable|integer|min:0',
 
             'beneficios' => 'required|array|min:1',
             'beneficios.*.chave' => 'required|string',

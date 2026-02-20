@@ -12,4 +12,10 @@ class Curso extends Model
     {
         return $this->hasMany(Modulo::class)->orderBy('ordem');
     }
+
+    public function usuariosQueSalvaram()
+{
+    return $this->belongsToMany(Usuario::class, 'curso_usuario_salvos')
+                ->withTimestamps();
+}
 }

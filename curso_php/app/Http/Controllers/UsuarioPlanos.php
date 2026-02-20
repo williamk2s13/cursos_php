@@ -1,34 +1,48 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Requests\ChoosePlanoRequest;
 use App\Models\PlanoHistorico;
+use App\Models\UsuarioUsoPlano;
+use Carbon\Carbon;
 
 class UsuarioPlanos extends Controller
 {
     public function choose(ChoosePlanoRequest $request)
-{
-    return DB::transaction(function () use ($request) {
+    {
+        return DB::transaction(function () use ($request) {
 
-        $user = $request->user();
+            $user = $request->user();
 
-        $user->escolherPlano($request->plano_id);
+            $user->escolherPlano($request->plano_id);
 
-        PlanoHistorico::create([
-            'usuario_id' => $user->id,
-            'plano_id'   => $request->plano_id,
-        ]);
+            PlanoHistorico::create([
+                'usuario_id' => $user->id,
+                'plano_id'   => $request->plano_id,
+            ]);
 
-        $user->refresh()->load('plano');
+            $hoje = Carbon::today(config('app.timezone'))->toDateString();
+            UsuarioUsoPlano::firstOrCreate(
+                [
+                    'usuario_id' => $user->id,
+                    'data_controle' => $hoje
+                ],
+                [
+                    'aulas_usadas_dia' => 0
+                ]
+            );
 
-        return response()->json([
-            'message' => 'Plano atribuído ao usuário',
-            'usuario' => $user
-        ]);
-    });
-}
+            $user->refresh()->load('plano');
+
+            return response()->json([
+                'message' => 'Plano atribuído ao usuário',
+                'usuario' => $user
+            ]);
+        });
+    }
 
     public function myPlan(Request $request)
     {
@@ -47,5 +61,3 @@ class UsuarioPlanos extends Controller
         ]);
     }
 }
-
-

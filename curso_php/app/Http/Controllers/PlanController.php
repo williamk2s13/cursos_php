@@ -11,36 +11,73 @@ class PlanController extends Controller
     public function index()
     {
         return response()->json(
+            Plano::with('beneficios')
+                ->where('status', true)
+                ->get()
+        );
+    }
+
+    public function adminIndex()
+    {
+        return response()->json(
             Plano::with('beneficios')->get()
         );
     }
 
     public function store(StorePlanoRequest $request)
-    {
-        return DB::transaction(function () use ($request) {
+{
+    return DB::transaction(function () use ($request) {
 
-            $plano = Plano::create(
-                $request->only(['nome', 'preco', 'status','pdf  '])
-            );
+        $data = $request->validated();
 
-            foreach ($request->beneficios as $beneficio) {
-                $plano->beneficios()->create($beneficio);
-            }
+        $planoMensal = Plano::create([
+            'nome' => $data['nome'] . ' Mensal',
+            'preco' => $data['preco'],
+            'duracao' => 'mensal',
+            'dias_validade' => 30,
+            'limite_aulas_dia' => $data['limite_aulas_dia'],
+            'status' => true
+        ]);
 
-            return response()->json(
-                $plano->load('beneficios'),
-                201
-            );
-        });
-    }
+        foreach ($data['beneficios'] as $beneficio) {
+            $planoMensal->beneficios()->create($beneficio);
+        }
 
-    public function destroy($id)
-    {
-        $plano = Plano::findOrFail($id);
-        $plano->delete();
+        $precoAnualBruto = $data['preco'] * 12;
+        $precoAnualComDesconto = $precoAnualBruto * 0.8; // 20% desconto
+
+        $planoAnual = Plano::create([
+            'nome' => $data['nome'] . ' Anual',
+            'preco' => round($precoAnualComDesconto, 2),
+            'duracao' => 'anual',
+            'dias_validade' => 365,
+            'limite_aulas_dia' => $data['limite_aulas_dia'],
+            'status' => true
+        ]);
+
+        foreach ($data['beneficios'] as $beneficio) {
+            $planoAnual->beneficios()->create($beneficio);
+        }
 
         return response()->json([
-            'message' => 'Plano deletado'
+            'mensal' => $planoMensal->load('beneficios'),
+            'anual' => $planoAnual->load('beneficios')
+        ], 201);
+    });
+}
+
+
+    public function toggle($id)
+    {
+        $plano = Plano::findOrFail($id);
+
+        $plano->update([
+            'status' => !$plano->status
+        ]);
+
+        return response()->json([
+            'message' => 'Status atualizado com sucesso',
+            'plano' => $plano
         ]);
     }
 }

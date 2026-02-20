@@ -8,12 +8,16 @@ class Plano extends Model
 {
     protected $table = 'planos';
 
-    protected $fillable = [
-        'nome',
-        'preco',
-        'status',
-        'pdf'
-    ];
+  protected $fillable = [
+    'nome',
+    'preco',
+    'status',
+    'pdf',
+    'duracao',
+    'dias_validade',
+    'limite_cursos_mes',
+    'limite_aulas_dia'
+];
 
     public $timestamps = false;
 
