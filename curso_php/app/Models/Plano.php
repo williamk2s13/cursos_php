@@ -16,7 +16,8 @@ class Plano extends Model
     'duracao',
     'dias_validade',
     'limite_cursos_mes',
-    'limite_aulas_dia'
+    'limite_aulas_dia',
+    'tem_pdf'
 ];
 
     public $timestamps = false;
@@ -33,6 +34,7 @@ class Plano extends Model
     {
         return $this->hasMany(PlanoBeneficio::class);
     }
+
 
     public function users()
     {

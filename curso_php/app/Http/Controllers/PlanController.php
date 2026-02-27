@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Plano;
 use App\Http\Requests\StorePlanoRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class PlanController extends Controller
 {
@@ -30,14 +31,15 @@ class PlanController extends Controller
 
         $data = $request->validated();
 
-        $planoMensal = Plano::create([
-            'nome' => $data['nome'] . ' Mensal',
-            'preco' => $data['preco'],
-            'duracao' => 'mensal',
-            'dias_validade' => 30,
-            'limite_aulas_dia' => $data['limite_aulas_dia'],
-            'status' => true
-        ]);
+      $planoMensal = Plano::create([
+    'nome' => $data['nome'] . ' Mensal',
+    'preco' => $data['preco'],
+    'duracao' => 'mensal',
+    'dias_validade' => 30,
+    'limite_aulas_dia' => $data['limite_aulas_dia'],
+    'tem_pdf' => $data['tem_pdf'] ?? false,
+    'status' => true
+]);
 
         foreach ($data['beneficios'] as $beneficio) {
             $planoMensal->beneficios()->create($beneficio);
@@ -46,14 +48,15 @@ class PlanController extends Controller
         $precoAnualBruto = $data['preco'] * 12;
         $precoAnualComDesconto = $precoAnualBruto * 0.8; // 20% desconto
 
-        $planoAnual = Plano::create([
-            'nome' => $data['nome'] . ' Anual',
-            'preco' => round($precoAnualComDesconto, 2),
-            'duracao' => 'anual',
-            'dias_validade' => 365,
-            'limite_aulas_dia' => $data['limite_aulas_dia'],
-            'status' => true
-        ]);
+       $planoAnual = Plano::create([
+    'nome' => $data['nome'] . ' Anual',
+    'preco' => round($precoAnualComDesconto, 2),
+    'duracao' => 'anual',
+    'dias_validade' => 365,
+    'limite_aulas_dia' => $data['limite_aulas_dia'],
+    'tem_pdf' => $data['tem_pdf'] ?? false,
+    'status' => true
+]);
 
         foreach ($data['beneficios'] as $beneficio) {
             $planoAnual->beneficios()->create($beneficio);
@@ -67,17 +70,19 @@ class PlanController extends Controller
 }
 
 
-    public function toggle($id)
-    {
-        $plano = Plano::findOrFail($id);
+   public function toggleGrupo(Request $request)
+{
+    $ids = $request->ids;
 
-        $plano->update([
-            'status' => !$plano->status
-        ]);
+    $planos = Plano::whereIn('id', $ids)->get();
 
-        return response()->json([
-            'message' => 'Status atualizado com sucesso',
-            'plano' => $plano
-        ]);
+    foreach ($planos as $plano) {
+        $plano->status = !$plano->status;
+        $plano->save();
     }
+
+    return response()->json([
+        'message' => 'Plano atualizado com sucesso'
+    ]);
+}
 }

@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cursos', function (Blueprint $table) {
-    $table->id();
-    $table->string('titulo');
-    $table->text('descricao')->nullable();
-    $table->string('capa')->nullable();
-    $table->boolean('status')->default(true);
-    $table->timestamps();
-});
-
+        Schema::create('failed_jobs', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -27,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('failed_jobs');
     }
 };

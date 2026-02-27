@@ -11,7 +11,7 @@ class StoreCursoRequest extends FormRequest
         return [
             'titulo' => 'required|string|max:255',
             'descricao' => 'nullable|string',
-            'capa' => 'nullable|string'
+           'capa' => 'nullable|file|image|max:2048',
         ];
     }
 }

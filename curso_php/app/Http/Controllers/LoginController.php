@@ -12,23 +12,16 @@ class LoginController extends Controller
    public function login(Request $request) 
 {
     $request->validate([
-        'email' => 'required',
+        'email' => 'required|email',
         'senha' => 'required',
     ]);
 
     $user = Usuario::with('plano')->where('email', $request->email)->first();
 
-    if (!$user) {
+    if (!$user || !Hash::check($request->senha, $user->senha)) {
         return response()->json([
             'success' => false,
-            'message' => 'Usuário não encontrado'
-        ], 404);
-    }
-
-    if (!Hash::check($request->senha, $user->senha)) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Senha incorreta'
+            'message' => 'E-mail ou senha incorretos.' 
         ], 401);
     }
 

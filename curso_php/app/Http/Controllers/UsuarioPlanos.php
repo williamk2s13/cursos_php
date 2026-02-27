@@ -24,6 +24,8 @@ class UsuarioPlanos extends Controller
                 'plano_id'   => $request->plano_id,
             ]);
 
+            
+
             $hoje = Carbon::today(config('app.timezone'))->toDateString();
             UsuarioUsoPlano::firstOrCreate(
                 [
@@ -34,6 +36,8 @@ class UsuarioPlanos extends Controller
                     'aulas_usadas_dia' => 0
                 ]
             );
+
+
 
             $user->refresh()->load('plano');
 

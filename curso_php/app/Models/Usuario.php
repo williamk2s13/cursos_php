@@ -6,6 +6,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Carbon\Carbon;
 
+
 class Usuario extends Authenticatable
 {
     use HasApiTokens;
@@ -20,7 +21,8 @@ class Usuario extends Authenticatable
         'cpf',
         'plano_id',
         'telefone',
-        'plano_expira_em'
+        'plano_expira_em',
+        'role'
     ];
 
     protected $hidden = [
@@ -40,7 +42,11 @@ public function plano()
 {
     return $this->belongsTo(Plano::class);
 }
-
+    
+public function cursos()
+{
+    return $this->hasMany(Curso::class, 'professor_id');
+}
 
 
 public function podeSerDeletadoPor($usuarioLogado)
@@ -50,12 +56,23 @@ public function podeSerDeletadoPor($usuarioLogado)
 
 public function escolherPlano($planoId)
 {
-    $plano = Plano::findOrFail($planoId);
+    $plano = Plano::with('beneficios')->findOrFail($planoId);
 
-    $this->update([
-        'plano_id' => $plano->id,
-        'plano_expira_em' => Carbon::now()->addDays($plano->dias_validade)
-    ]);
+    $this->plano_id = $plano->id;
+    $this->plano_expira_em = now()->addDays(30); 
+
+    $temBeneficioProfessor = $plano->beneficios
+        ->where('chave', 'professor')
+        ->where('valor', 1)
+        ->count() > 0;
+
+    if ($temBeneficioProfessor) {
+        $this->role = 'professor';
+    } else {
+        $this->role = 'user';
+    }
+
+    $this->save();
 }
 public function removerPlano()
 {
@@ -76,9 +93,25 @@ public function cursosSalvos()
 }
     public function usoPlano()
 {
-    return $this->hasMany(\App\Models\UsuarioUsoPlano::class, 'usuario_id');
+    return $this->hasMany(UsuarioUsoPlano::class, 'usuario_id');
 }
 
+public function isAdmin()
+{
+    return $this->role === 'admin';
+}
 
+public function isProfessor()
+{
+    return $this->role === 'professor';
+}   
 
+public function aulasConcluidas()
+{
+    return $this->belongsToMany(Aula::class, 'aula_user')->withTimestamps();
+}
+public function avaliacoes()
+{
+    return $this->hasMany(Avaliacao::class);
+}
 }

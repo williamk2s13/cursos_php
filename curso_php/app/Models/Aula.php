@@ -13,7 +13,8 @@ class Aula extends Model
         'tem_pdf',
         'pdf_url',
         'ordem',
-        'status'
+        'status',
+        'views'
     ];
 
     public function modulo()

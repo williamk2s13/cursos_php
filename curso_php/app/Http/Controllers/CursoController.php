@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreCursoRequest;
 use App\Models\Curso;
+use Illuminate\Support\Facades\Auth;
+
 class CursoController extends Controller
 {
     public function index()
@@ -14,13 +16,44 @@ class CursoController extends Controller
             ->get();
     }
 
-    public function store(StoreCursoRequest $request)
+    public function meusCursos()
     {
-        return Curso::create($request->validated());
+        return Curso::where('professor_id', Auth::id())
+            ->with('modulos.aulas')
+            ->get();
     }
 
-    public function show(Curso $curso)
+    public function store(StoreCursoRequest $request)
     {
-        return $curso->load('modulos.aulas');
+        $data = $request->validated();
+
+        if ($request->hasFile('capa')) {
+            $data['capa'] = $request->file('capa')->store('capas', 'public');
+        }
+
+        $data['professor_id'] = Auth::id();
+        $data['status'] = true;
+
+        return Curso::create($data);
     }
+
+   public function show(Curso $curso, Request $request)
+{
+    $curso->load('modulos.aulas');
+
+    $user = $request->user();
+
+    if ($user) {
+        $aulasConcluidasIds = $user->aulasConcluidas()->pluck('aula_id')->toArray();
+
+        foreach ($curso->modulos as $modulo) {
+            foreach ($modulo->aulas as $aula) {
+            
+                $aula->foi_concluida = in_array($aula->id, $aulasConcluidasIds);
+            }
+        }
+    }
+
+    return response()->json($curso);
+}
 }

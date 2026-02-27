@@ -21,6 +21,7 @@ class StorePlanoRequest extends FormRequest
             'dias_validade' => 'required|integer|min:1',
             'limite_cursos_mes' => 'nullable|integer|min:0',
             'limite_aulas_dia' => 'nullable|integer|min:0',
+            'tem_pdf' => 'nullable|boolean',    
 
             'beneficios' => 'required|array|min:1',
             'beneficios.*.chave' => 'required|string',
